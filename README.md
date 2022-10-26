@@ -62,28 +62,28 @@ In the PGAdmin UI, click on the Query Tool:
 
 Run the following queries in the Query Tool:
 
-```
+```SQL
 CREATE SCHEMA TMP_ASTRO;
 ```
 
-```
+```SQL
 SET search_path TO TMP_ASTRO;
 ```
 
-```
+```SQL
 CREATE TABLE customers_table (customer_id CHAR(10), customer_name VARCHAR(100), type VARCHAR(10) );
 ```
 
-```
+```SQL
 INSERT INTO customers_table (CUSTOMER_ID, CUSTOMER_NAME,TYPE) VALUES     ('CUST1','NAME1','TYPE1'),('CUST2','NAME2','TYPE1'),('CUST3','NAME3','TYPE2');
 ```
 
-```
+```SQL
 CREATE TABLE reporting_table (
     CUSTOMER_ID CHAR(30), CUSTOMER_NAME VARCHAR(100), ORDER_ID CHAR(10), PURCHASE_DATE VARCHAR(100), AMOUNT FLOAT, TYPE CHAR(10));
 ```
 
-```
+```SQL
 INSERT INTO reporting_table (CUSTOMER_ID, CUSTOMER_NAME, ORDER_ID, PURCHASE_DATE, AMOUNT, TYPE) VALUES
 ('INCORRECT_CUSTOMER_ID','INCORRECT_CUSTOMER_NAME','ORDER2','2/2/2022',200,'TYPE1'),
 ('CUST3','NAME3','ORDER3','3/3/2023',300,'TYPE2'),
