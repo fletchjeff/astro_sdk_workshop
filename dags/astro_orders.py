@@ -8,16 +8,7 @@ from astro import sql as aql
 from astro.files import File
 from astro.sql.table import Table
 
-# Define constants for interacting with external systems
-# S3_FILE_PATH = "s3://<aws-bucket-name>"
-# S3_CONN_ID = "aws_default"
-# SNOWFLAKE_CONN_ID = "snowflake_default"
-# SNOWFLAKE_ORDERS = "orders_table"
-# SNOWFLAKE_CUSTOMERS = "customers_table"
-# SNOWFLAKE_REPORTING = "reporting_table"
-
-HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo" #orders_data_header.csv"
-#S3_CONN_ID = "aws_default"
+HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo"
 POSTGRES_CONN_ID = "local_postgres"
 POSTGRES_ORDERS = "orders_table"
 POSTGRES_CUSTOMERS = "customers_table"
@@ -53,18 +44,18 @@ dag = DAG(
 )
 
 with dag:
-    # Extract a file with a header from S3 into a temporary Table, referenced by the
+    # Extract a file with a header from the web into a temporary Table, referenced by the
     # variable `orders_data`
     orders_data = aql.load_file(
         # Data file needs to have a header row. The input and output table can be replaced with any
         # valid file and connection ID.
         input_file=File(
-            path=HTTP_FILE_PATH + "/orders_data_header.csv", #conn_id=S3_CONN_ID
+            path=HTTP_FILE_PATH + "/orders_data_header.csv",
         ),
         output_table=Table(conn_id=POSTGRES_CONN_ID),
     )
 
-    # Create a Table object for customer data in the Snowflake database
+    # Create a Table object for customer data in the Postgres database
     customers_table = Table(
         name=POSTGRES_CUSTOMERS,
         conn_id=POSTGRES_CONN_ID,

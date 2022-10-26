@@ -37,83 +37,95 @@ Create Airflow connections to the local postgres server.
 
 Create a new Postgres connection with the following values:
 
-Connection ID: `local_postgres`
-Connection type: `Postgres`
-Host: `host.docker.local` [Note: If this doesn't work, use the IP address of your local machine]
-Schema: *[leave this blank]*
-Login: `postgres`
-Password: `postgres`
-Port: `5432`
+- Connection ID: `local_postgres`
+- Connection type: `Postgres`
+- Host: `host.docker.local` [Note: If this doesn't work, use the IP address of your local machine]
+- Schema: *[leave this blank]*
+- Login: `postgres`
+- Password: `postgres`
+- Port: `5432`
 
 ### Step 4: Configure Postgres
 Open the PGAdmin UI at http://localhost:5050/
 
-Add a new server by right clicking on the Server 
+Add a new server by right clicking on Server, then Register > Server...
+
+![PG Admin](images/pgadmin0.png)
+
+The create the new connection using the following settings:
+![PG Admin](images/pgadmin1.png)
+![PG Admin](images/pgadmin2.png)
 
 ### Step 5: Create the Tables
-Open the PGAdmin UI at http://localhost:5050/
+In the PGAdmin UI, click on the Query Tool:
+![PG Admin](images/pgadmin3.png)
 
+Run the following queries in the Query Tool:
+
+```
 CREATE SCHEMA TMP_ASTRO;
+```
 
+```
 SET search_path TO TMP_ASTRO;
+```
 
+```
 CREATE TABLE customers_table (customer_id CHAR(10), customer_name VARCHAR(100), type VARCHAR(10) );
+```
 
+```
 INSERT INTO customers_table (CUSTOMER_ID, CUSTOMER_NAME,TYPE) VALUES     ('CUST1','NAME1','TYPE1'),('CUST2','NAME2','TYPE1'),('CUST3','NAME3','TYPE2');
+```
 
-
+```
 CREATE TABLE reporting_table (
     CUSTOMER_ID CHAR(30), CUSTOMER_NAME VARCHAR(100), ORDER_ID CHAR(10), PURCHASE_DATE VARCHAR(100), AMOUNT FLOAT, TYPE CHAR(10));
+```
 
+```
 INSERT INTO reporting_table (CUSTOMER_ID, CUSTOMER_NAME, ORDER_ID, PURCHASE_DATE, AMOUNT, TYPE) VALUES
 ('INCORRECT_CUSTOMER_ID','INCORRECT_CUSTOMER_NAME','ORDER2','2/2/2022',200,'TYPE1'),
 ('CUST3','NAME3','ORDER3','3/3/2023',300,'TYPE2'),
 ('CUST4','NAME4','ORDER4','4/4/2022',400,'TYPE2');
+```
 
+### Step 6: View the DAG for this simple ETL workflow
+Use your favorite code editor or text editor to view the [`astro_orders.py`](dags/astro_orders.py) file in your project's dags directory.
 
-Overview
-========
+This DAG extracts the data you loaded into S3 and runs a few simple SQL statements to clean the data, load it into a reporting table on Snowflake, and transform it into a dataframe so that you can print various table details to Airflow logs using Python.
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+Much of this DAG's functionality comes from the Python functions that use task decorators from the Python SDK. See the [How it works](https://docs.astronomer.io/learn/astro-python-sdk#how-it-works) section for more information about these decorators and the benefits of using the SDK for this implementation.
 
-Project Contents
-================
+### Step 7: Run the code
+1. In the Airflow UI, you should see a DAG called astro_orders. Make it active by clicking the slider next to its name:
+![Unpause Dag](images/unpause-dag.png)
+2. Click the play button next to the DAG's name to run the DAG:
+![Trigger Dag](images/trigger-dag.png)
+3. Click the DAG's name to see how it ran in the Grid view:
+![Trigger Dag](images/select-dag-grid-view.png)
 
-Your Astro project contains the following files and folders:
+<!-- ## [How it works]
+The example DAG uses the TaskFlow API and decorators to define dependencies between tasks. If you're used to defining dependencies with bitshift operators, this might not look familiar. Essentially, the TaskFlow API abstracts dependencies, XComs, and other boilerplate DAG code so that you can define task dependencies with function invocations.
 
-- dags: This folder contains the Python files for your Airflow DAGs. By default, this directory includes an example DAG that runs every 30 minutes and simply prints the current date. It also includes an empty 'my_custom_function' that you can fill out to execute Python code.
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop DAGs in this project.
+The Astro SDK takes this abstraction a step further while providing more flexibility to your code. The most important details are:
 
-Deploy Your Project Locally
-===========================
+* Using `aql` decorators, you can run both SQL and Python within a Pythonic context. This example DAG uses decorators to run both SQL queries and Python code
 
-1. Start Airflow on your local machine by running 'astro dev start'.
+* The Astro SDK includes a `Table` object which contains all of the metadata that's necessary for handling SQL table creation between Airflow tasks. When a `Table` is passed into a function, the Astro SDK automatically passes all connection, XCom, and metadata configuration to the task.
 
-This command will spin up 3 Docker containers on your machine, each for a different Airflow component:
+* The example DAG demonstrates one of the key powers of the `Table` object. When the DAG ran `join_orders_customers`, it joined two tables that had different connections and schema. The Astro SDK automatically creates a temporary table and handles joining the tables. This also means that you can replace the S3 and Snowflake configurations with any valid configurations for other supported data stores and the code will still work. The Astro SDK handles all of the translation between services and database types in the background.
 
-- Postgres: Airflow's Metadata Database
-- Webserver: The Airflow component responsible for rendering the Airflow UI
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
+* The Astro SDK can automatically convert to SQL tables to pandas DataFrames using the `aql.dataframe`, meaning you can run complex ML models and SQL queries on the same data in the same DAG without any additional configuration.
 
-2. Verify that all 3 Docker containers were created by running 'docker ps'.
+Now that you understand the core qualities of the Astro SDK, let's look at it in the context of the example DAG by walking through each step in your ETL pipeline.
 
-Note: Running 'astro dev start' will start your project with the Airflow Webserver exposed at port 8080 and Postgres exposed at port 5432. If you already have either of those ports allocated, you can either stop your existing Docker containers or change the port.
-
-3. Access the Airflow UI for your local Airflow project. To do so, go to http://localhost:8080/ and log in with 'admin' for both your Username and Password.
-
-You should also be able to access your Postgres Database at 'localhost:5432/postgres'.
-
-Deploy Your Project to Astronomer
-=================================
-
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://docs.astronomer.io/cloud/deploy-code/
-
-Contact
-=======
-
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support team: https://support.astronomer.io/
+### Extract
+To extract from CSV into a SQL Table, you only need to specify the location of the data and an Airflow connection for the destination SQL table in Postgres.
+```Python
+orders_data = aql.load_file(
+    # data file needs to have a header row
+    input_file=File(path=S3_FILE_PATH + "/orders_data_header.csv", conn_id=S3_CONN_ID),
+    output_table=Table(conn_id=SNOWFLAKE_CONN_ID),
+)
+``` -->
