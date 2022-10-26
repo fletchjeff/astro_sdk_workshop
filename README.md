@@ -1,3 +1,76 @@
+# Go Data Fest
+## Data Orchestration and Data Lineage with Astronomer
+
+This repo is for the Go Data Fest workshop. This tutorial demonstrates how to write an Extract, Transform, Load (ETL) pipeline on your local machine with the Astro Python SDK. The Astro SDK is maintained by Astronomer and simplifies the pipeline authoring process with native Python functions for common data orchestration use cases.
+
+The pipeline you build in this tutorial will:
+
+* Extract a file into a Snowflake relational table.
+* Transform that table.
+* Load the transformed table into a reporting table.
+
+The example DAG in this tutorial uses Amazon S3 and Snowflake, but you can replace these with any supported data sources and tables simply by changing connection information.
+
+## Prerequisites
+To complete this tutorial, you need:
+
+* [Docker Desktop](https://www.docker.com/) installed.
+* The [Astro CLI](https://docs.astronomer.io/astro/cli/get-started)
+
+
+### Step 1: Get the repo
+Clone this repo to your local machine:
+```
+git clone https://github.com/fletchjeff/astro_sdk_workshop
+```
+
+### Step 2: Start `astro`
+Start up the local `astro` services.
+```
+astro dev start
+```
+
+### Step 3: Create the Postgres Connection
+Create Airflow connections to the local postgres server.
+* Open the Airflow UI at http://localhost:8080/
+* Go to **Admin > Connections**
+
+Create a new Postgres connection with the following values:
+
+Connection ID: `local_postgres`
+Connection type: `Postgres`
+Host: `host.docker.local` [Note: If this doesn't work, use the IP address of your local machine]
+Schema: *[leave this blank]*
+Login: `postgres`
+Password: `postgres`
+Port: `5432`
+
+### Step 4: Configure Postgres
+Open the PGAdmin UI at http://localhost:5050/
+
+Add a new server by right clicking on the Server 
+
+### Step 5: Create the Tables
+Open the PGAdmin UI at http://localhost:5050/
+
+CREATE SCHEMA TMP_ASTRO;
+
+SET search_path TO TMP_ASTRO;
+
+CREATE TABLE customers_table (customer_id CHAR(10), customer_name VARCHAR(100), type VARCHAR(10) );
+
+INSERT INTO customers_table (CUSTOMER_ID, CUSTOMER_NAME,TYPE) VALUES     ('CUST1','NAME1','TYPE1'),('CUST2','NAME2','TYPE1'),('CUST3','NAME3','TYPE2');
+
+
+CREATE TABLE reporting_table (
+    CUSTOMER_ID CHAR(30), CUSTOMER_NAME VARCHAR(100), ORDER_ID CHAR(10), PURCHASE_DATE VARCHAR(100), AMOUNT FLOAT, TYPE CHAR(10));
+
+INSERT INTO reporting_table (CUSTOMER_ID, CUSTOMER_NAME, ORDER_ID, PURCHASE_DATE, AMOUNT, TYPE) VALUES
+('INCORRECT_CUSTOMER_ID','INCORRECT_CUSTOMER_NAME','ORDER2','2/2/2022',200,'TYPE1'),
+('CUST3','NAME3','ORDER3','3/3/2023',300,'TYPE2'),
+('CUST4','NAME4','ORDER4','4/4/2022',400,'TYPE2');
+
+
 Overview
 ========
 
