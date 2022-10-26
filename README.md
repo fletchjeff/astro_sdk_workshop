@@ -50,15 +50,18 @@ Open the PGAdmin UI at http://localhost:5050/
 
 Add a new server by right clicking on Server, then Register > Server...
 
-![PG Admin](images/pgadmin0.png)
+<img src="images/pgadmin0.png" width="700">
 
 The create the new connection using the following settings:
-![PG Admin](images/pgadmin1.png)
-![PG Admin](images/pgadmin2.png)
+
+<img src="images/pgadmin1.png" width="500">
+<!-- ![PG Admin](  | width=100) -->
+
+<img src="images/pgadmin2.png" width="500">
 
 ### Step 5: Create the Tables
 In the PGAdmin UI, click on the Query Tool:
-![PG Admin](images/pgadmin3.png)
+<img src="images/pgadmin3.png" width="700">
 
 Run the following queries in the Query Tool:
 
