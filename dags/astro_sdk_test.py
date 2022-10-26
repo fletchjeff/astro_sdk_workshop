@@ -9,16 +9,16 @@ from astro.files import File
 from astro.sql.table import Table
 
 # Define constants for interacting with external systems
-S3_FILE_PATH = "s3://<aws-bucket-name>"
-S3_CONN_ID = "aws_default"
-SNOWFLAKE_CONN_ID = "snowflake_default"
-SNOWFLAKE_ORDERS = "orders_table"
-SNOWFLAKE_CUSTOMERS = "customers_table"
-SNOWFLAKE_REPORTING = "reporting_table"
+# S3_FILE_PATH = "s3://<aws-bucket-name>"
+# S3_CONN_ID = "aws_default"
+# SNOWFLAKE_CONN_ID = "snowflake_default"
+# SNOWFLAKE_ORDERS = "orders_table"
+# SNOWFLAKE_CUSTOMERS = "customers_table"
+# SNOWFLAKE_REPORTING = "reporting_table"
 
 HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo" #orders_data_header.csv"
 #S3_CONN_ID = "aws_default"
-POSTGRES_CONN_ID = "snowflake_default"
+POSTGRES_CONN_ID = "local_postgres"
 POSTGRES_ORDERS = "orders_table"
 POSTGRES_CUSTOMERS = "customers_table"
 POSTGRES_REPORTING = "reporting_table"
@@ -59,15 +59,15 @@ with dag:
         # Data file needs to have a header row. The input and output table can be replaced with any
         # valid file and connection ID.
         input_file=File(
-            path=S3_FILE_PATH + "/orders_data_header.csv", conn_id=S3_CONN_ID
+            path=HTTP_FILE_PATH + "/orders_data_header.csv", #conn_id=S3_CONN_ID
         ),
-        output_table=Table(conn_id=SNOWFLAKE_CONN_ID),
+        output_table=Table(conn_id=POSTGRES_CONN_ID),
     )
 
     # Create a Table object for customer data in the Snowflake database
     customers_table = Table(
-        name=SNOWFLAKE_CUSTOMERS,
-        conn_id=SNOWFLAKE_CONN_ID,
+        name=POSTGRES_CUSTOMERS,
+        conn_id=POSTGRES_CONN_ID,
     )
 
     # Filter the orders data and then join with the customer table,
@@ -77,15 +77,23 @@ with dag:
     # Merge the joined data into the reporting table based on the order_id.
     # If there's a conflict in the customer_id or customer_name, then use the ones from
     # the joined data
-    reporting_table = aql.merge(
+    # reporting_table = aql.merge(
+    #     target_table=Table(
+    #         name=POSTGRES_REPORTING,
+    #         conn_id=POSTGRES_CONN_ID,
+    #     ),
+    #     source_table=joined_data,
+    #     target_conflict_columns=["order_id"],
+    #     columns=["customer_id", "customer_name"],
+    #     if_conflicts="ignore",
+    # )
+
+    reporting_table = aql.append(
         target_table=Table(
-            name=SNOWFLAKE_REPORTING,
-            conn_id=SNOWFLAKE_CONN_ID,
+            name=POSTGRES_REPORTING,
+            conn_id=POSTGRES_CONN_ID,
         ),
         source_table=joined_data,
-        target_conflict_columns=["order_id"],
-        columns=["customer_id", "customer_name"],
-        if_conflicts="update",
     )
 
     # Transform the reporting table into a dataframe
