@@ -33,6 +33,10 @@ astro dev start
 ### Step 3: Create the Postgres Connection
 Create Airflow connections to the local postgres server.
 * Open the Airflow UI at http://localhost:8080/
+
+User: `admin`
+Password: `admin`
+
 * Go to **Admin > Connections**
 
 Create a new Postgres connection with the following values:
@@ -47,6 +51,9 @@ Create a new Postgres connection with the following values:
 
 ### Step 4: Configure Postgres
 Open the PGAdmin UI at http://localhost:5050/
+
+User: `name@example.com`
+Password: `admin`
 
 Add a new server by right clicking on Server, then Register > Server...
 
