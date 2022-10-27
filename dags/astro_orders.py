@@ -60,19 +60,7 @@ with dag:
     # saving the output into a temporary table referenced by the Table instance `joined_data`
     joined_data = join_orders_customers(filter_orders(orders_data), customers_table)
 
-    # Merge the joined data into the reporting table based on the order_id.
-    # If there's a conflict in the customer_id or customer_name, then use the ones from
-    # the joined data
-    # reporting_table = aql.merge(
-    #     target_table=Table(
-    #         name=POSTGRES_REPORTING,
-    #         conn_id=POSTGRES_CONN_ID,
-    #     ),
-    #     source_table=joined_data,
-    #     target_conflict_columns=["order_id"],
-    #     columns=["customer_id", "customer_name"],
-    #     if_conflicts="ignore",
-    # )
+    # Append the joined data into the reporting table based on the order_id.
 
     reporting_table = aql.append(
         task_id="append_to_reporting_table",
