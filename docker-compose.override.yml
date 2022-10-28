@@ -9,6 +9,8 @@ services:
     environment:
     - PGADMIN_DEFAULT_EMAIL=name@example.com
     - PGADMIN_DEFAULT_PASSWORD=admin
+    extra_hosts:
+      - "host.docker.internal:host-gateway"      
   scheduler:
     extra_hosts:
       - "host.docker.internal:host-gateway"  
