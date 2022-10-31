@@ -1,5 +1,14 @@
 version: '2'
 services:
+  minio:
+    image: quay.io/minio/minio
+    networks:
+      - airflow
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000
+      - 9001:9001
+    restart: always      
   pgadmin:
     image: dpage/pgadmin4
     networks:
@@ -10,7 +19,8 @@ services:
     - PGADMIN_DEFAULT_EMAIL=name@example.com
     - PGADMIN_DEFAULT_PASSWORD=admin
     extra_hosts:
-      - "host.docker.internal:host-gateway"      
+      - "host.docker.internal:host-gateway"
+    restart: always
   scheduler:
     extra_hosts:
       - "host.docker.internal:host-gateway"  
@@ -19,4 +29,4 @@ services:
       - "host.docker.internal:host-gateway"
   triggerer:
     extra_hosts:
-      - "host.docker.internal:host-gateway"    
+      - "host.docker.internal:host-gateway"

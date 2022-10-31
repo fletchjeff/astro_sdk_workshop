@@ -1,1 +1,2 @@
-astro-sdk-python[postgres]
+astro-sdk-python[amazon,postgres]
+minio

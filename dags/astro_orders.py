@@ -9,15 +9,15 @@ from astro.files import File
 from astro.sql.table import Table
 
 HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo"
-POSTGRES_CONN_ID = "local_postgres"
+POSTGRES_CONN_ID = "mypsql"
 POSTGRES_ORDERS = "orders_table"
 POSTGRES_CUSTOMERS = "customers_table"
 POSTGRES_REPORTING = "reporting_table"
 
-# Basic DAG definition. Run the DAG starting January 1st, 2019 on a daily schedule.
+# Basic DAG definition. Run the DAG starting October 30th, 2022 on a daily schedule.
 dag = DAG(
     dag_id="astro_orders",
-    start_date=datetime(2019, 1, 1),
+    start_date=datetime(2022, 10, 30),
     schedule_interval="@daily",
     catchup=False,
 )
@@ -26,6 +26,7 @@ with dag:
 
     # Extract a file with a header from the web into a temporary Table, referenced by the
     # variable `orders_data`
+
     orders_data = aql.load_file(
         # Data file needs to have a header row. The input and output table can be replaced with any
         # valid file and connection ID.
@@ -76,7 +77,7 @@ with dag:
     def transform_dataframe(df: DataFrame):
         purchase_dates = df.loc[:, "purchase_date"]
         print("purchase dates:", purchase_dates)
-        return purchase_dates
+        return purchase_dates.to_frame()
 
 
     # Transform the reporting table into a dataframe
