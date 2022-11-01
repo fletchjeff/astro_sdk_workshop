@@ -9,18 +9,18 @@ services:
       - 9000:9000
       - 9001:9001
     restart: always      
-  pgadmin:
-    image: dpage/pgadmin4
+  sqlite-web:
+    image: fletchjeffastro/astro_sdk_workshop:0.0.2
     networks:
       - airflow
+    command: sqlite_web -p 8088 -H 0.0.0.0 /data/astro_orders.db
     ports:
-      - 5050:80
-    environment:
-    - PGADMIN_DEFAULT_EMAIL=name@example.com
-    - PGADMIN_DEFAULT_PASSWORD=admin
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 8088:8088
     restart: always
+    volumes:
+      - ${PWD}/include:/data   
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  
   scheduler:
     extra_hosts:
       - "host.docker.internal:host-gateway"  

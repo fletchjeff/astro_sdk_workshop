@@ -13,13 +13,13 @@ ENV AIRFLOW_CONN_AWS_DEFAULT='{\
     "extra": "{\"aws_access_key\": \"minioadmin\", \"aws_secret_access_key\": \"minioadmin\", \"endpoint_url\": \"http://host.docker.internal:9000\"}"\
   }'
 
-ENV AIRFLOW_CONN_MYPSQL='{\
-    "conn_type": "postgres",\
+ENV AIRFLOW_CONN_ASTRO_ORDERS_SQLITE='{\
+    "conn_type": "sqlite",\
     "description": "",\
-    "login": "postgres",\
-    "password": "postgres",\
-    "host": "host.docker.internal",\
-    "port": 5432,\
+    "login": "",\
+    "password": "",\
+    "host": "/usr/local/airflow/include/astro_orders.db",\
+    "port": null,\
     "schema": "",\
     "extra": ""\
   }'

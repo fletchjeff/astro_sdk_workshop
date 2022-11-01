@@ -9,7 +9,7 @@ The pipeline you build in this tutorial will:
 * Transform that table.
 * Load the transformed table into a reporting table.
 
-The example DAG in this local version uses [Minio](http://min.io) S3 and Postgresql, but you can replace these with any supported data sources and tables simply by changing connection information.
+The example DAG in this local version uses [Minio](http://min.io) S3 and SQLite, but you can replace these with any supported data sources and tables simply by changing connection information.
 
 ## Prerequisites
 To complete this tutorial, you need:
@@ -60,25 +60,14 @@ If its still running, enabling the Auto-refresh with the slider in the grid view
    
 <img src="images/5_astro_orders.png" width="700">
 
-### Optional: View Tables in PGAdmin
-You can view the tables created for this tutorial by connecting to the local PGAdmin service created when astro launches.
+### Optional: View Tables in sqlite-web
+You can view the tables created for this tutorial by connecting to the local sqlite-web UI service created when astro launches.
 
-Open the PGAdmin UI at http://localhost:5050/
+Open the sqlite-web UI at http://localhost:8088/
 
-User: `name@example.com`  
-Password: `admin`
+You can see the tables created by various DAGs here
 
-Add a new server by right clicking on Server, then Register > Server...
-
-<img src="images/pgadmin0.png" width="600">
-
-The create the new connection using the following settings:
-
-<img src="images/pgadmin1.png" width="400">
-<!-- ![PG Admin](  | width=100) -->
-
-<img src="images/pgadmin2.png" width="400">
-
+<img src="images/8_sqlite_web.png" width="700">
 
 ### Optional: View S3 Buckets in Minio
 You can view the files created for this tutorial by connecting to the local Minio console created when astro launches.
@@ -91,15 +80,8 @@ Password: `minioadmin`
 <img src="images/7_minio.png" width="700">
 
 ### Table Creation
-The SQL used to the create the tables in the local Postgres instance is slightly different to that used for Snowflake in the original tutorial. Below is the SQL statements executed in the `project_setup` step.
+The SQL used to the create the tables in the local SQLite instance is slightly different to that used for Snowflake in the original tutorial. Below is the SQL statements executed in the `project_setup` step.
 
-```SQL
-CREATE SCHEMA TMP_ASTRO;
-```
-
-```SQL
-SET search_path TO TMP_ASTRO;
-```
 
 ```SQL
 CREATE TABLE customers_table (

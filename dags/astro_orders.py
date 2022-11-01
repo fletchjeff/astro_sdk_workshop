@@ -9,7 +9,7 @@ from astro.files import File
 from astro.sql.table import Table
 
 HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo"
-POSTGRES_CONN_ID = "mypsql"
+POSTGRES_CONN_ID = "astro_orders_sqlite"
 POSTGRES_ORDERS = "orders_table"
 POSTGRES_CUSTOMERS = "customers_table"
 POSTGRES_REPORTING = "reporting_table"
@@ -75,7 +75,7 @@ with dag:
     # Define a function for transforming tables to dataframes
     @aql.dataframe
     def transform_dataframe(df: DataFrame):
-        purchase_dates = df.loc[:, "purchase_date"]
+        purchase_dates = df.loc[:, "PURCHASE_DATE"]
         print("purchase dates:", purchase_dates)
         return purchase_dates.to_frame()
 
