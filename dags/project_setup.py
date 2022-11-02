@@ -10,11 +10,8 @@ from astro import sql as aql
 from astro.files import File
 from astro.sql.table import Table
 
-# For local dev
-DB_CONN_ID = "astro_orders_sqlite"
-
-# For Astro
-#DB_CONN_ID = "jf_snowflake"
+DB_CONN_ID = "astro_orders_sqlite" # For local dev
+#DB_CONN_ID = "jf_snowflake" # For Astro
 
 dag = DAG(
     dag_id="project_setup",
@@ -59,7 +56,7 @@ with dag:
     def create_reporing_table_2():
         return """
         CREATE TABLE reporting_table (
-        CUSTOMER_ID CHAR(30), CUSTOMER_NAME VARCHAR(100), ORDER_ID CHAR(10), PURCHASE_DATE VARCHAR(100), AMOUNT FLOAT, TYPE CHAR(10));
+        customer_id CHAR(30), customer_name VARCHAR(100), order_id CHAR(10), purchase_date VARCHAR(100), AMOUNT FLOAT, TYPE CHAR(10));
         """
 
     @aql.run_raw_sql

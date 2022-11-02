@@ -10,11 +10,9 @@ from astro.sql.table import Table
 
 HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo"
 
-# For local dev
-DB_CONN_ID = "astro_orders_sqlite"
 
-# For Astro
-#DB_CONN_ID = "jf_snowflake"
+DB_CONN_ID = "astro_orders_sqlite" # For local dev
+#DB_CONN_ID = "jf_snowflake" # For Astro
 
 DB_ORDERS = "orders_table"
 DB_CUSTOMERS = "customers_table"
@@ -81,13 +79,18 @@ with dag:
     # Define a function for transforming tables to dataframes
     @aql.dataframe
     def transform_dataframe(df: DataFrame):
-        purchase_dates = df.loc[:, "PURCHASE_DATE"]
-        print("purchase dates:", purchase_dates)
+        purchase_dates = df.loc[:, "purchase_date"]
         return purchase_dates.to_frame()
 
 
     # Transform the reporting table into a dataframe
     purchase_dates = transform_dataframe(reporting_table)
+
+    @aql.dataframe
+    def print_dataframe(df: DataFrame):
+        print("purchase dates:", df)
+
+    print_dataframe(purchase_dates)
 
     # Delete temporary and unnamed tables created by `load_file` and `transform`, in this example
     # both `orders_data` and `joined_data`
