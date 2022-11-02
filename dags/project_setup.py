@@ -10,7 +10,11 @@ from astro import sql as aql
 from astro.files import File
 from astro.sql.table import Table
 
-POSTGRES_CONN_ID = "astro_orders_sqlite"
+# For local dev
+DB_CONN_ID = "astro_orders_sqlite"
+
+# For Astro
+#DB_CONN_ID = "jf_snowflake"
 
 dag = DAG(
     dag_id="project_setup",
@@ -67,9 +71,9 @@ with dag:
         ('CUST4','NAME4','ORDER4','4/4/2022',400,'TYPE2');
         """                        
 
-    create_customers_table_1(conn_id=POSTGRES_CONN_ID) >> \
-    create_customers_table_2(conn_id=POSTGRES_CONN_ID) >> \
-    create_customers_table_3(conn_id=POSTGRES_CONN_ID)
-    create_reporing_table_1(conn_id=POSTGRES_CONN_ID) >> \
-    create_reporing_table_2(conn_id=POSTGRES_CONN_ID) >> \
-    create_reporing_table_3(conn_id=POSTGRES_CONN_ID)                
+    create_customers_table_1(conn_id=DB_CONN_ID) >> \
+    create_customers_table_2(conn_id=DB_CONN_ID) >> \
+    create_customers_table_3(conn_id=DB_CONN_ID)
+    create_reporing_table_1(conn_id=DB_CONN_ID) >> \
+    create_reporing_table_2(conn_id=DB_CONN_ID) >> \
+    create_reporing_table_3(conn_id=DB_CONN_ID)                

@@ -9,10 +9,16 @@ from astro.files import File
 from astro.sql.table import Table
 
 HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo"
-POSTGRES_CONN_ID = "astro_orders_sqlite"
-POSTGRES_ORDERS = "orders_table"
-POSTGRES_CUSTOMERS = "customers_table"
-POSTGRES_REPORTING = "reporting_table"
+
+# For local dev
+DB_CONN_ID = "astro_orders_sqlite"
+
+# For Astro
+#DB_CONN_ID = "jf_snowflake"
+
+DB_ORDERS = "orders_table"
+DB_CUSTOMERS = "customers_table"
+DB_REPORTING = "reporting_table"
 
 # Basic DAG definition. Run the DAG starting October 30th, 2022 on a daily schedule.
 dag = DAG(
@@ -34,13 +40,13 @@ with dag:
         input_file=File(
             path=HTTP_FILE_PATH + "/orders_data_header.csv",
         ),
-        output_table=Table(conn_id=POSTGRES_CONN_ID),
+        output_table=Table(conn_id=DB_CONN_ID),
     )
 
     # Create a Table object for customer data in the Postgres database
     customers_table = Table(
-        name=POSTGRES_CUSTOMERS,
-        conn_id=POSTGRES_CONN_ID,
+        name=DB_CUSTOMERS,
+        conn_id=DB_CONN_ID,
     )
 
     # Define an SQL query for our transform step as a Python function using the SDK.
@@ -66,8 +72,8 @@ with dag:
     reporting_table = aql.append(
         task_id="append_to_reporting_table",
         target_table=Table(
-            name=POSTGRES_REPORTING,
-            conn_id=POSTGRES_CONN_ID,
+            name=DB_REPORTING,
+            conn_id=DB_CONN_ID,
         ),
         source_table=joined_data,
     )

@@ -2,7 +2,7 @@ FROM quay.io/astronomer/astro-runtime:6.0.3
 
 COPY tmp_sdk_fix/s3.py /usr/local/lib/python3.9/site-packages/astro/files/locations/amazon/s3.py
 
-ENV AIRFLOW_CONN_AWS_DEFAULT='{\
+ENV AIRFLOW_CONN_MINIO_DEFAULT='{\
     "conn_type": "aws",\
     "description": "",\
     "login": "minioadmin",\
@@ -25,5 +25,11 @@ ENV AIRFLOW_CONN_ASTRO_ORDERS_SQLITE='{\
   }'
 
 ENV AIRFLOW__CORE__XCOM_BACKEND=astro.custom_backend.astro_custom_backend.AstroCustomXcomBackend
+
+# Local dev ENV
 ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_URL='s3://local-xcom' 
-ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_CONN_ID='aws_default'
+ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_CONN_ID='minio_default'
+
+# Astro ENV
+#ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_URL='s3://local-xcom' 
+#ENV AIRFLOW__ASTRO_SDK__XCOM_STORAGE_CONN_ID='aws_default'
