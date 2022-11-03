@@ -10,7 +10,6 @@ from astro.sql.table import Table
 
 HTTP_FILE_PATH = "https://jfletcher-datasets.s3.eu-central-1.amazonaws.com/astro_demo"
 
-
 DB_CONN_ID = "astro_orders_sqlite" # For local dev
 #DB_CONN_ID = "jf_snowflake" # For Astro
 

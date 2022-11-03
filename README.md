@@ -52,7 +52,7 @@ If its still running, enabling the Auto-refresh with the slider in the grid view
  
 <img src="images/3_astro_orders.png" width="700">
 
-2. Click the play button next to the DAG's name to run the DAG:
+2. Click the play button next to the DAG's name to trigger the DAG run:
 
 <img src="images/4_astro_orders.png" width="700">
 
@@ -63,7 +63,7 @@ If its still running, enabling the Auto-refresh with the slider in the grid view
 ### Optional: View Tables in sqlite-web
 You can view the tables created for this tutorial by connecting to the local sqlite-web UI service created when astro launches.
 
-Open the sqlite-web UI at http://localhost:8088/
+* Open the sqlite-web UI at http://localhost:8088/
 
 You can see the tables created by various DAGs here
 
@@ -72,7 +72,7 @@ You can see the tables created by various DAGs here
 ### Optional: View S3 Buckets in Minio
 You can view the files created for this tutorial by connecting to the local Minio console created when astro launches.
 
-Open the Minio console at http://localhost:9001/login
+* Open the Minio console at http://localhost:9001/login
 
 User: `minioadmin`  
 Password: `minioadmin`
