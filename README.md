@@ -5,7 +5,7 @@ This repo is to help you get up and running quickly with the Astro Python SDK fo
 
 The pipeline you build in this tutorial will:
 
-* Extract a remote csv file into a local Postgres relational table.
+* Extract a remote csv file into a local SQLite relational table.
 * Transform that table.
 * Load the transformed table into a reporting table.
 
@@ -31,7 +31,7 @@ astro dev start
 ```
 
 ### Step 3: Run the Project Setup DAG
-The the project setup DAG to configure the minio S3 buckets and the postgres schema and tables.
+The the project setup DAG to configure the minio S3 buckets and the SQLite schema and tables.
 * Open the Airflow UI at http://localhost:8080/
 
 User: `admin`  
